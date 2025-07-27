@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ t.order_confirmed }} - SafeBite Supply</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- ✅ Updated Header with Logo -->
+  <div class="header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="/static/logo.png" alt="SafeBite Supply Logo" width="50" height="50" style="border-radius: 50%;">
+      <h1>SafeBite Supply</h1>
+    </div>
+    <form method="POST" action="/set-language">
+      <select name="language" onchange="this.form.submit()">
+        <option value="en" {% if lang=='en' %}selected{% endif %}>English</option>
+        <option value="hi" {% if lang=='hi' %}selected{% endif %}>हिंदी</option>
+        <option value="kn" {% if lang=='kn' %}selected{% endif %}>ಕನ್ನಡ</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- ✅ Order Confirmation Content -->
+  <div class="container">
+    <h2>{{ t.order_confirmed }}</h2>
+    <p>{{ t.thank_you }}</p>
+    <p><strong>{{ product }}</strong></p>
+    <p>{{ name }} - {{ location }}</p>
+    <p>{{ t.payment_info }}</p>
+  </div>
+
+  <!-- ✅ Floating Chat Assistant -->
+  <div id="chat-button" onclick="toggleChat()">💬</div>
+
+  <div id="chat-box" style="display: none;">
+    <div id="chat-header">SB Assistant</div>
+    <div id="chat-messages"></div>
+    <input id="chat-input" placeholder="Ask something..." onkeydown="sendMessage(event)">
+  </div>
+
+  <script src="/static/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+from flask import Flask, render_template, request, redirect, session, url_for
+
+app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Required for session to store selected language
+
+# ✅ Full Multilingual Texts Dictionary
+texts = {
+    "en": {
+        "title": "SafeBite Supply",
+        "welcome": "Welcome to SafeBite Supply!",
+        "description": "Connecting hygienic vendors to street food businesses.",
+        "quality_note": "All products listed are verified for quality and hygiene.",
+        "choose_role": "Are you here to buy or sell?",
+        "buy": "Buy",
+        "sell": "Sell"
+    },
+    "hi": {
+        "title": "सेफबाइट सप्लाई",
+        "welcome": "सेफबाइट सप्लाई में आपका स्वागत है!",
+        "description": "स्वच्छ विक्रेताओं को स्ट्रीट फूड व्यवसायों से जोड़ना।",
+        "quality_note": "सभी उत्पाद गुणवत्ता और स्वच्छता के लिए सत्यापित हैं।",
+        "choose_role": "क्या आप खरीदने या बेचने आए हैं?",
+        "buy": "खरीदें",
+        "sell": "बेचें"
+    },
+    "kn": {
+        "title": "ಸೇಫ್‌ಬೈಟ್ ಸಪ್ಲೈ",
+        "welcome": "ಸೇಫ್‌ಬೈಟ್ ಸಪ್ಲೈಗೆ ಸ್ವಾಗತ!",
+        "description": "ಶುದ್ಧತೆಯುಳ್ಳ ಮಾರಾಟಗಾರರನ್ನು ರಸ್ತೆ ಆಹಾರ ವ್ಯವಹಾರಗಳಿಗೆ ಸಂಪರ್ಕಿಸುತ್ತದೆ.",
+        "quality_note": "ಎಲ್ಲಾ ಉತ್ಪನ್ನಗಳು ಗುಣಮಟ್ಟ ಮತ್ತು ಸ್ವಚ್ಛತೆಗೆ ಪರಿಶೀಲಿಸಲ್ಪಟ್ಟಿವೆ.",
+        "choose_role": "ನೀವು ಖರೀದಿಸಲು ಅಥವಾ ಮಾರಲು ಬಂದಿದ್ದೀರಾ?",
+        "buy": "ಖರೀದಿಸಿ",
+        "sell": "ಮಾರಾಟ ಮಾಡಿ"
+    }
+}
+
+# ✅ Home route to render homepage
+@app.route('/')
+def home():
+    # Get the selected language from session, default to 'en'
+    lang = session.get('lang', 'en')
+    t = texts.get(lang, texts['en'])  # fallback to English if key missing
+    return render_template('home.html', lang=lang, t=t)
+
+# ✅ Language selection route
+@app.route('/set-language', methods=['POST'])
+def set_language():
+    selected_language = request.form.get('language', 'en')
+    session['lang'] = selected_language
+    return redirect(url_for('home'))
+
+# ✅ Start the Flask app
+if __name__ == '__main__':
+    app.run(debug=True)

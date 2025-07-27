@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ product_name }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- ✅ Header with Logo -->
+  <div class="header">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <img src="/static/logo.png" alt="SafeBite Supply Logo" width="50" height="50" style="border-radius: 50%;">
+      <h1>{{ t.title }}</h1>
+    </div>
+    <form method="POST" action="/set-language">
+      <select name="language" onchange="this.form.submit()">
+        <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+        <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
+        <option value="kn" {% if lang == 'kn' %}selected{% endif %}>ಕನ್ನಡ</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- ✅ Product Purchase Section -->
+  <div class="container">
+    <h2>{{ product_name }}</h2>
+    <p>{{ t.delivery }}</p>
+    <p>{{ t.cod }}</p>
+
+    <form action="/confirm-order" method="POST">
+      <input type="hidden" name="product" value="{{ product_name }}">
+      <input type="text" name="name" placeholder="{{ t.your_name }}" required><br><br>
+      <input type="text" name="location" placeholder="{{ t.your_location }}" required><br><br>
+
+      {% if product_name in grocery_items %}
+        <p style="color: red;"><strong>{{ t.vendor_only_warning }}</strong></p>
+        <label>
+          <input type="checkbox" name="is_vendor" value="yes" required>
+          {{ t.vendor_checkbox }}
+        </label><br><br>
+      {% endif %}
+
+      <button type="submit" class="button">{{ t.confirm_order }}</button>
+    </form>
+  </div>
+
+  <!-- ✅ Floating Chat Assistant -->
+  <div id="chat-button" onclick="toggleChat()">💬</div>
+
+  <div id="chat-box" style="display: none;">
+    <div id="chat-header">SB Assistant</div>
+    <div id="chat-messages"></div>
+    <input id="chat-input" placeholder="Ask something..." onkeydown="sendMessage(event)">
+  </div>
+
+  <script src="/static/chat.js"></script>
+</body>
+</html>

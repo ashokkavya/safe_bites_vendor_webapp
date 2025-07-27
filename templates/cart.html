@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ t.product_list }} - {{ t.cart if t.cart else "Cart" }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    .cart-container {
+      padding: 30px;
+      max-width: 700px;
+      margin: auto;
+      background-color: white;
+      border-radius: 10px;
+    }
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #ddd;
+    }
+    .cart-item h3 {
+      margin: 0;
+    }
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .qty-controls button {
+      background-color: #b2dfdb;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .total {
+      text-align: right;
+      font-weight: bold;
+      font-size: 20px;
+      margin-top: 20px;
+    }
+    .checkout-btn {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
+      border: none;
+      text-decoration: none;
+      float: right;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: #e0f7fa;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ✅ Header -->
+  <div class="header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="/static/logo.png" alt="SafeBite Logo" width="50" height="50" style="border-radius: 50%;">
+      <h1>{{ t.title }}</h1>
+    </div>
+    <form method="POST" action="/set-language">
+      <select name="language" onchange="this.form.submit()">
+        <option value="en" {% if lang=='en' %}selected{% endif %}>English</option>
+        <option value="hi" {% if lang=='hi' %}selected{% endif %}>हिंदी</option>
+        <option value="kn" {% if lang=='kn' %}selected{% endif %}>ಕನ್ನಡ</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- ✅ Cart Content -->
+  <div class="cart-container">
+    <h2>{{ t.cart if t.cart else "Your Cart" }}</h2>
+
+    {% if cart_items %}
+      {% for item in cart_items %}
+      <div class="cart-item">
+        <div>
+          <h3>{{ item.name }}</h3>
+          <p>₹{{ item.price }} × {{ item.qty }} = ₹{{ item.subtotal }}</p>
+        </div>
+        <div class="qty-controls">
+          <button onclick="removeFromCart('{{ item.name }}')">−</button>
+          <button onclick="addToCart('{{ item.name }}')">+</button>
+        </div>
+      </div>
+      {% endfor %}
+      <div class="total">{{ t.price if t.price else "Total" }}: ₹{{ total }}</div>
+      <a href="/checkout" class="checkout-btn">🛍️ {{ t.confirm_order if t.confirm_order else "Checkout" }}</a>
+    {% else %}
+      <p>{{ t.empty_cart if t.empty_cart else "Your cart is empty." }}</p>
+    {% endif %}
+  </div>
+
+  <!-- ✅ Cart JS -->
+  <script>
+    function addToCart(productName) {
+      fetch('/add-to-cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: productName })
+      }).then(() => window.location.reload());
+    }
+
+    function removeFromCart(productName) {
+      fetch('/remove-from-cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: productName })
+      }).then(() => window.location.reload());
+    }
+  </script>
+
+</body>
+</html>

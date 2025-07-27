@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ t.product_list }}</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #fafafa;
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .product-card {
+      display: flex;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      padding: 15px;
+      align-items: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .product-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 20px;
+    }
+
+    .product-details {
+      flex: 1;
+    }
+
+    .product-details h3 {
+      margin: 0 0 5px;
+      font-size: 1.1em;
+    }
+
+    .product-details p {
+      margin: 4px 0;
+      color: #444;
+    }
+
+    .qty-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .qty-btn {
+      padding: 5px 10px;
+      background-color: #a3d2ca;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #fff;
+    }
+
+    .qty-btn:hover {
+      background-color: #7ebdb2;
+    }
+
+    /* ✅ Floating View Cart Button */
+    .view-cart {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      background-color: orange;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 25px;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+      z-index: 999;
+    }
+
+.productbackground {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.productbackgroundr::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('background.jpg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: rgba(0, 0, 0, 0.4);
+  background-blend-mode: darken;
+  opacity: 0.5;
+  z-index: -1;
+}
+  </style>
+</head>
+<body>
+ <div class="productbackground">
+<h1>{{ t.product_list }}</h1>
+
+<!-- ✅ Main Products -->
+{% for product in products %}
+<div class="product-card">
+  <img src="{{ url_for('static', filename=product.image) }}" alt="{{ product.name }}">
+  <div class="product-details">
+    <h3>{{ product.name }}</h3>
+    <p>₹{{ product.price }} ({{ t.cod }})</p>
+    <p>{{ t.delivery }}</p>
+    <div class="qty-controls">
+      <button class="qty-btn" onclick="removeFromCart('{{ product.name }}')">−</button>
+      <button class="qty-btn" onclick="addToCart('{{ product.name }}')">+</button>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<!-- ✅ Vendor Marketplace -->
+<h2>{{ t.marketplace }}</h2>
+{% for product in vendor_products %}
+<div class="product-card">
+  <img src="{{ url_for('static', filename='default.jpg') }}" alt="{{ product.name }}">
+  <div class="product-details">
+    <h3>Product: {{ product.name }}</h3>
+    <p>₹{{ product.price }} ({{ t.cod }})</p>
+    <p>Sold by {{ product.vendor }}</p>
+    <p>{{ product.use }}</p>
+    <p><strong>Quantity in stock:</strong> {{ product.quantity }}</p>
+    <div class="qty-controls">
+      <button class="qty-btn" onclick="removeFromCart('{{ product.name }}')">−</button>
+      <button class="qty-btn" onclick="addToCart('{{ product.name }}')">+</button>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<!-- ✅ View Cart Button -->
+<a href="/cart" class="view-cart">🛒 View Cart</a>
+
+<script>
+  function addToCart(productName) {
+    fetch('/add-to-cart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product: productName })
+    }).then(res => res.json())
+      .then(data => {
+        if (data.status === 'added') {
+          alert(productName + " added to cart");
+        }
+      });
+  }
+
+  function removeFromCart(productName) {
+    fetch('/remove-from-cart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ product: productName })
+    }).then(res => res.json())
+      .then(data => {
+        if (data.status === 'removed') {
+          alert(productName + " removed from cart");
+        }
+      });
+  }
+</script>
+
+</body>
+</html>

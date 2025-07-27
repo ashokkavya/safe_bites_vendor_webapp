@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>{{ t.sell_heading }}</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- ✅ Header -->
+  <div class="header">
+    <div style="display:flex; align-items:center; gap:10px;">
+      <img src="/static/logo.png" alt="SafeBite Supply Logo" width="50" height="50" style="border-radius: 50%;">
+      <h1>SafeBite Supply</h1>
+    </div>
+    <form method="POST" action="/set-language">
+      <select name="language" onchange="this.form.submit()">
+        <option value="en" {% if lang=='en' %}selected{% endif %}>English</option>
+        <option value="hi" {% if lang=='hi' %}selected{% endif %}>हिंदी</option>
+        <option value="kn" {% if lang=='kn' %}selected{% endif %}>ಕನ್ನಡ</option>
+      </select>
+    </form>
+  </div>
+
+  <!-- ✅ Sell Product Section -->
+  <div class="container">
+    <h2>{{ t.sell_heading }}</h2>
+
+    <!-- Flash Message -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div style="background: #fff3cd; padding: 10px; border: 1px solid #ffeeba; margin-bottom: 20px;">
+          {% for message in messages %}
+            <p style="color: #856404;">{{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <!-- ✅ Sell Form -->
+    <form method="POST" id="sellForm">
+      <input type="text" id="productName" name="vendor_name" placeholder="{{ t.your_name }}" required><br><br>
+
+      <select id="productSelect" name="product_name">
+        <option>{{ t.product_name }}: Disposable Gloves</option>
+        <option>{{ t.product_name }}: Paper Plates</option>
+        <option>{{ t.product_name }}: Handwash (5L)</option>
+        <option>{{ t.product_name }}: Eco Containers</option>
+        <option>{{ t.product_name }}: Face Masks</option>
+        <option>{{ t.product_name }}: Rice (5kg)</option>
+        <option>{{ t.product_name }}: Atta (5kg)</option>
+        <option>{{ t.product_name }}: Cooking Oil (1L)</option>
+        <option>{{ t.product_name }}: Pulses (1kg)</option>
+        <option>{{ t.product_name }}: Fresh Vegetables</option>
+        <option>{{ t.product_name }}: Tea Packets (500g)</option>
+      </select><br><br>
+
+      <input type="text" id="productPrice" name="price" placeholder="{{ t.price }}" required><br><br>
+      <input type="number" id="productQuantity" name="quantity" placeholder="Quantity" required><br><br>
+      <input type="text" id="productUse" name="use_case" placeholder="{{ t.use_case }}" required><br><br>
+
+      <!-- Optional image input -->
+      <!-- <input type="file" id="productImage" name="image"><br><br> -->
+
+      <button type="submit" class="button">{{ t.post_product }}</button>
+    </form>
+
+    <!-- 🌍 Vendor Map -->
+    <br><br>
+    <a href="/vendor-map" class="button">🌍 View Vendor Map</a>
+  </div>
+
+  <!-- ✅ Floating Chat Assistant -->
+  <div id="chat-button" onclick="toggleChat()">💬</div>
+  <div id="chat-box" style="display: none;">
+    <div id="chat-header">SB Assistant</div>
+    <div id="chat-messages"></div>
+    <input id="chat-input" placeholder="Ask something..." onkeydown="sendMessage(event)">
+  </div>
+
+  <!-- ✅ JS Scripts -->
+  <script src="/static/chat.js"></script>
+  <script src="/static/script.js"></script> <!-- Custom JS file -->
+</body>
+</html>
+
